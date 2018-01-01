@@ -1,24 +1,30 @@
 import std.complex;
 import std.stdio;
 import std.conv;
+import std.math;
 
-void main() {
+void main(string[] args) {
     immutable uint MAX = 1000;
-    immutable uint RES = 2560;
-    immutable ubyte AA = 2;
+    uint width  = 400;
+    uint height = 400;
+    uint small  = (width < height) ? width : height;
+    real zoom = 512;
+    immutable ubyte AA = 1;
+    real posR = -0.757843017578125;
+    real posI =  0.073272705078125;
 
     ubyte[] imageData;
-    foreach (y; 0 .. RES) {
-        foreach (x; 0 .. RES) {
-            uint sumR = 0;
-            uint sumG = 0;
-            uint sumB = 0;
+    foreach (y; 0 .. height) {
+        foreach (x; 0 .. width) {
+            real sumR = 0;
+            real sumG = 0;
+            real sumB = 0;
 
             foreach (xAA; 0 .. AA) {
                 foreach (yAA; 0 .. AA) {
                     Complex!real c;
-                    c.re = (x + real(xAA) / AA - RES / 2) / RES * 4;
-                    c.im = (y + real(yAA) / AA - RES / 2) / RES * 4;
+                    c.re = (x + real(xAA) / AA - width  / 2) / small * 4 / zoom + posR;
+                    c.im = (y + real(yAA) / AA - height / 2) / small * 4 / zoom + posI;
                     Complex!real z = 0;
 
                     uint i = 0;
@@ -27,19 +33,19 @@ void main() {
                     }
 
                     if (i != MAX) {
-                        sumR += i * 10 % 0xFF;
-                        sumG += i * 20 % 0xFF;
-                        sumB += i * 30 % 0xFF;
+                        sumR += (1 + cos(i * PI / 110.0L)) / 2 * 0xFF;
+                        sumG += (1 + cos(i * PI / 120.0L)) / 2 * 0xFF;
+                        sumB += (1 + cos(i * PI / 130.0L)) / 2 * 0xFF;
                     }
                 }
             }
 
-            imageData ~= cast(ubyte)(real(sumR) / AA / AA);
-            imageData ~= cast(ubyte)(real(sumG) / AA / AA);
-            imageData ~= cast(ubyte)(real(sumB) / AA / AA);
+            imageData ~= cast(ubyte)(sumR / AA / AA);
+            imageData ~= cast(ubyte)(sumG / AA / AA);
+            imageData ~= cast(ubyte)(sumB / AA / AA);
         }
 
-        writeln("Render: ", y.to!real / RES * 100, r"% done");
+        writeln("Render: ", y.to!real / height * 100, r"% done");
     }
 
     toFile(imageData, "mandelbrot.raw");
