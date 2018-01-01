@@ -3,6 +3,7 @@ import std.stdio;
 import std.conv;
 import std.math;
 import std.getopt;
+import std.file;
 
 void main(string[] args) {
     uint max = 1000;
@@ -59,5 +60,8 @@ void main(string[] args) {
         writeln("Render: ", y.to!real / height * 100, r"% done");
     }
 
-    toFile(imageData, "mandelbrot " ~ to!string(width) ~ "x" ~ to!string(height) ~ ".raw");
+    string filename = "mandelbrot " ~ to!string(width) ~ "x" ~ to!string(height) ~ " ";
+    size_t n = 0;
+    while (exists(filename ~ to!string(++n) ~ ".raw")) {}
+    toFile(imageData, filename ~ to!string(n) ~ ".raw");
 }
