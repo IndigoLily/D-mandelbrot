@@ -35,18 +35,18 @@ void main(string[] args) {
                 foreach (yaa; 0 .. aa) {
                     Complex!real c;
                     c.re = (x + real(xaa) / aa - width  / 2) / small * 4 / zoom + posR;
-                    c.im = (y + real(yaa) / aa - height / 2) / small * 4 / zoom + posI;
+                    c.im = (y + real(yaa) / aa - height / 2) / small * 4 / zoom - posI;
                     Complex!real z = 0;
 
-                    uint i = 0;
-                    for (; i < max && z.re * z.re + z.im * z.im < 4; ++i) {
+                    uint itr = 0;
+                    for (; itr < max && z.re^^2 + z.im^^2 < 4; ++itr) {
                         z = z * z + c;
                     }
 
-                    if (i != max) {
-                        sumR += (1 + cos(i * PI / 110.0L)) / 2 * 0xFF;
-                        sumG += (1 + cos(i * PI / 120.0L)) / 2 * 0xFF;
-                        sumB += (1 + cos(i * PI / 130.0L)) / 2 * 0xFF;
+                    if (itr < max) {
+                        sumR += (1 + cos(itr * PI / 101.0L)) / 2 * 0xFF;
+                        sumG += (1 + cos(itr * PI / 102.0L)) / 2 * 0xFF;
+                        sumB += (1 + cos(itr * PI / 103.0L)) / 2 * 0xFF;
                     }
                 }
             }
@@ -59,5 +59,5 @@ void main(string[] args) {
         writeln("Render: ", y.to!real / height * 100, r"% done");
     }
 
-    toFile(imageData, "mandelbrot.raw");
+    toFile(imageData, "mandelbrot " ~ to!string(width) ~ "x" ~ to!string(height) ~ ".raw");
 }
