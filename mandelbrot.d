@@ -26,7 +26,7 @@ void main(string[] args) {
     uint small  = (width < height) ? width : height;
 
     ubyte[] imageData;
-    imageData.reserve(width*height*3);
+    imageData.length = width*height*3;
     foreach (y; 0 .. height) {
         foreach (x; 0 .. width) {
             double sumR = 0;
@@ -53,9 +53,9 @@ void main(string[] args) {
                 }
             }
 
-            imageData ~= cast(ubyte)(sumR / aa / aa);
-            imageData ~= cast(ubyte)(sumG / aa / aa);
-            imageData ~= cast(ubyte)(sumB / aa / aa);
+            imageData[(y * width + x) * 3 + 0] = cast(ubyte)(sumR / aa / aa);
+            imageData[(y * width + x) * 3 + 1] = cast(ubyte)(sumG / aa / aa);
+            imageData[(y * width + x) * 3 + 2] = cast(ubyte)(sumB / aa / aa);
         }
 
         writefln("Render: % 6.2f%% done", y.to!double / height * 100);
