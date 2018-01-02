@@ -9,10 +9,10 @@ void main(string[] args) {
     uint max = 1000;
     uint width  = 400;
     uint height = 400;
-    real zoom = 1;
+    double zoom = 1;
     ubyte aa = 1;
-    real posR = 0;
-    real posI = 0;
+    double posR = 0;
+    double posI = 0;
 
     getopt(args,
             "iterations|itr", &max,
@@ -26,18 +26,19 @@ void main(string[] args) {
     uint small  = (width < height) ? width : height;
 
     ubyte[] imageData;
+    imageData.reserve(width*height*3);
     foreach (y; 0 .. height) {
         foreach (x; 0 .. width) {
-            real sumR = 0;
-            real sumG = 0;
-            real sumB = 0;
+            double sumR = 0;
+            double sumG = 0;
+            double sumB = 0;
 
             foreach (xaa; 0 .. aa) {
                 foreach (yaa; 0 .. aa) {
-                    Complex!real c;
-                    c.re = (x + real(xaa) / aa - width  / 2) / small * 4 / zoom + posR;
-                    c.im = (y + real(yaa) / aa - height / 2) / small * 4 / zoom - posI;
-                    Complex!real z = 0;
+                    Complex!double c;
+                    c.re = (x + double(xaa) / aa - width  / 2) / small * 4 / zoom + posR;
+                    c.im = (y + double(yaa) / aa - height / 2) / small * 4 / zoom - posI;
+                    Complex!double z = 0;
 
                     uint itr = 0;
                     for (; itr < max && z.re^^2 + z.im^^2 < 4; ++itr) {
@@ -45,9 +46,9 @@ void main(string[] args) {
                     }
 
                     if (itr < max) {
-                        sumR += (1 + cos(itr * PI / 101.0L)) / 2 * 0xFF;
-                        sumG += (1 + cos(itr * PI / 102.0L)) / 2 * 0xFF;
-                        sumB += (1 + cos(itr * PI / 103.0L)) / 2 * 0xFF;
+                        sumR += (1 + cos(itr * PI / 100.0L + 1)) / 2 * 0xFF;
+                        sumG += (1 + cos(itr * PI / 100.0L + 2)) / 2 * 0xFF;
+                        sumB += (1 + cos(itr * PI / 100.0L + 3)) / 2 * 0xFF;
                     }
                 }
             }
@@ -57,7 +58,7 @@ void main(string[] args) {
             imageData ~= cast(ubyte)(sumB / aa / aa);
         }
 
-        writeln("Render: ", y.to!real / height * 100, r"% done");
+        writefln("Render: % 6.2f%% done", y.to!double / height * 100);
     }
 
     string filename = "mandelbrot " ~ to!string(width) ~ "x" ~ to!string(height) ~ " ";
